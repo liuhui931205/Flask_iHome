@@ -11,14 +11,7 @@ Migrate(app, db)
 manager.add_command('db', MigrateCommand)
 
 
-
-@app.route('/', methods=['GET', 'POST'])
-def index():
-    # session['name'] = 'laowang'
-    # redis_store.set('name','laowang')
-    return 'index'
-
-
 if __name__ == '__main__':
     # app.run()
+    print app.url_map
     manager.run()
