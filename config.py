@@ -1,5 +1,6 @@
 # coding=utf-8
 import redis
+import logging
 
 
 class Config(object):
@@ -23,6 +24,7 @@ class Config(object):
 
 class DevelopmentConfig(Config):
     DEBUG = True
+    LOG_LEVEL = logging.DEBUG
 
 
 class ProductionConfig(Config):
