@@ -43,6 +43,47 @@ function sendSMSCode() {
     }
 
     // TODO: 通过ajax方式向后端接口发送请求，让后端发送短信验证码
+        var params = {
+            'mobile':mobile,
+            'image_code':imageCode,
+            'image_code_id':imageCodeId,
+
+        }
+        $.ajax({
+            'url':'/api/v1.0/sms_code',
+            'data': JSON.stringify(params),
+            'type':'post',
+            'contentType':'application/json',
+            'success': function (resp) {
+                //
+                // console.log(resp)
+                if (resp.errno == '0'){
+                    var num = 60;
+                    var tid = setInterval(function () {
+                        if (num<=0){
+                            clearInterval(tid)
+                            $('.phonecode-a').text('获取验证码')
+                            $(".phonecode-a").attr("onclick", "sendSMSCode();");
+                        }
+                        else {
+                            $('.phonecode-a').text(num+'秒')
+
+                        }
+                        num -= 1
+
+                    }, 1000)
+
+
+                }
+                else {
+                    $('#password2-err span').html(resp.errmsg);
+                    $('#password2-err').show();
+                    $(".phonecode-a").attr("onclick", "sendSMSCode();");
+
+
+                }
+            }
+        })
 }
 
 $(document).ready(function() {

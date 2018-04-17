@@ -6,6 +6,8 @@ from iHome import redis_store,constants
 from iHome.response_code import RET
 import json
 import re
+from iHome.utils.sms import CCP
+import random
 
 @api.route('/sms_code',methods=['POST'])
 def send_sms_code():
@@ -28,7 +30,16 @@ def send_sms_code():
     if real_image_code != image_code:
         return jsonify(errno=RET.DATAERR, errmsg='图片验证码错误')
     # todo: 发生短信验证码
+    sms_code = '%06d'% random.randint(0,999999)
+    try:
+        redis_store.set('sms_code:%s'%mobile, sms_code,constants.SMS_CODE_REDIS_EXPIRES)
+    except Exception as e:
+        current_app.logging.error(e)
+        return jsonify(errno=RET.DBERR,errmsg='保存验证码失败')
 
+    res = CCP().send_template_sms(mobile ,[sms_code,constants.SMS_CODE_REDIS_EXPIRES/60], 1)
+    if res != 1 :
+        return jsonify(errno=RET.THIRDERR,errmsg='发送短信失败')
     return jsonify(errno=RET.OK, errmsg='发送短信验证码成功')
 
 @api.route('/image_code')
@@ -39,7 +50,7 @@ def get_image_code():
 
     name, text, data = captcha.generate_captcha()
     try:
-        redis_store.set('imagecode: %s' %cur_id, text, constants.IMAGE_CODE_REDIS_EXPIRES )
+        redis_store.set('imagecode:%s' %cur_id, text, constants.IMAGE_CODE_REDIS_EXPIRES )
     except Exception as e:
         current_app.logging.error(e)
         return jsonify(errno=RET.DBERR,errmsg='保存图片验证码失败')
