@@ -4,26 +4,26 @@
 
 #-*- coding: UTF-8 -*-  
 
-# from iHome.lib.SDK
+from iHome.libs.yuntongxun.CCPRestSDK import REST
 import ConfigParser
 
 #主帐号
-accountSid= '您的主帐号';
+accountSid= '您的主帐号'
 
 #主帐号Token
-accountToken= '您的主帐号Token';
+accountToken= '您的主帐号Token'
 
 #应用Id
-appId='您的应用ID';
+appId='您的应用ID'
 
 #请求地址，格式如下，不需要写http://
-serverIP='app.cloopen.com';
+serverIP='app.cloopen.com'
 
 #请求端口 
-serverPort='8883';
+serverPort='8883'
 
 #REST版本号
-softVersion='2013-12-26';
+softVersion='2013-12-26'
 
   # 发送模板短信
   # @param to 手机号码

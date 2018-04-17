@@ -4,6 +4,32 @@ from iHome.utils.captcha.captcha import captcha
 from . import api
 from iHome import redis_store,constants
 from iHome.response_code import RET
+import json
+import re
+
+@api.route('/sms_code',methods=['POST'])
+def send_sms_code():
+    req_data = request.data
+    req_dict = json.loads(req_data)
+    mobile = req_dict['mobile']
+    image_code = req_dict['image_code']
+    image_code_id = req_dict['image_code_id']
+    if not all([mobile, image_code, image_code_id]):
+        return jsonify(errno=RET.PARAMERR, errmsg='信息不完整')
+    if not re.match(r'1[3456789]\d{9}',mobile):
+        return jsonify(errno=RET.PARAMERR, errmsg='手机号码格式不对')
+    try:
+        real_image_code = redis_store.get('imagecode:%s'% image_code_id)
+    except Exception as e:
+        current_app.logging.error(e)
+        return jsonify(errno=RET.DBERR, errmsg='查询图片验证码错误')
+    if not real_image_code:
+        return jsonify(errno=RET.NODATA, errmsg='图片验证码过期')
+    if real_image_code != image_code:
+        return jsonify(errno=RET.DATAERR, errmsg='图片验证码错误')
+    # todo: 发生短信验证码
+
+    return jsonify(errno=RET.OK, errmsg='发送短信验证码成功')
 
 @api.route('/image_code')
 def get_image_code():
