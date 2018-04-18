@@ -23,7 +23,7 @@ def send_sms_code():
     try:
         real_image_code = redis_store.get('imagecode:%s'% image_code_id)
     except Exception as e:
-        current_app.logging.error(e)
+        current_app.logger.error(e)
         return jsonify(errno=RET.DBERR, errmsg='查询图片验证码错误')
     if not real_image_code:
         return jsonify(errno=RET.NODATA, errmsg='图片验证码过期')
@@ -31,10 +31,11 @@ def send_sms_code():
         return jsonify(errno=RET.DATAERR, errmsg='图片验证码错误')
     # todo: 发生短信验证码
     sms_code = '%06d'% random.randint(0,999999)
+    current_app.logger.info('短信验证码'+sms_code)
     try:
         redis_store.set('sms_code:%s'%mobile, sms_code,constants.SMS_CODE_REDIS_EXPIRES)
     except Exception as e:
-        current_app.logging.error(e)
+        current_app.logger.error(e)
         return jsonify(errno=RET.DBERR,errmsg='保存验证码失败')
 
     res = CCP().send_template_sms(mobile ,[sms_code,constants.SMS_CODE_REDIS_EXPIRES/60], 1)
@@ -49,10 +50,11 @@ def get_image_code():
         abort(403)
 
     name, text, data = captcha.generate_captcha()
+    current_app.logger.info('图片验证码'+text)
     try:
         redis_store.set('imagecode:%s' %cur_id, text, constants.IMAGE_CODE_REDIS_EXPIRES )
     except Exception as e:
-        current_app.logging.error(e)
+        current_app.logger.error(e)
         return jsonify(errno=RET.DBERR,errmsg='保存图片验证码失败')
 
 
