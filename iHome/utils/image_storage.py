@@ -14,5 +14,6 @@ def image_storage(data):
 
     if info.status_code == 200:
         key = ret.get('key')
+        return key
     else:
         raise Exception('上传文件失败')
