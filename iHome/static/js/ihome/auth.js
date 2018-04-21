@@ -16,11 +16,20 @@ $(document).ready(function(){
     // TODO: 查询用户的实名认证信息
     $.get('/api/v1.0/user/auth',function (resp) {
         if(resp.errno == '0'){
-        $('#real-name').val(resp.data.dict.real_name)
-        $('#id-card').val(resp.data.dict.id_card)
-        $('#real-name').attr('disabled',true)
-        $('#id-card').attr('disabled',true)
-        $('.btn-success').hide()
+            if(resp.data.real_name && resp.data.id_card){
+               $('#real-name').val(resp.data.real_name)
+                $('#id-card').val(resp.data.id_card)
+                $('#real-name').attr('disabled',true)
+                $('#id-card').attr('disabled',true)
+                $('.btn-success').hide()
+            }
+
+        }
+        else if (resp.errno == '4101'){
+            location.href = 'login.html'
+        }
+        else {
+            alert(resp.errmsg)
         }
     })
 

@@ -21,11 +21,8 @@ def get_user_auth():
     if not user:
         return jsonify(errno=RET.USERERR,errmsg='用户不存在')
 
-    dict = {
-        'real_name':user.real_name,
-        'id_card':user.id_card,
-    }
-    return jsonify(errno=RET.OK, errmsg='Ok',data={'dict':dict})
+
+    return jsonify(errno=RET.OK, errmsg='Ok',data=user.auth_to_dict())
 
 
 

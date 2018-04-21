@@ -18,13 +18,33 @@ $(document).ready(function(){
     var houseId = queryData["id"];
 
     // TODO: 获取该房屋的详细信息
+    $.get('/api/v1.0/house/' + houseId,function (resp) {
+        if (resp.errno == '0'){
+            var html = template('house-image-tmpl',{'img_urls':resp.data.house.img_urls,'price':resp.data.house.price})
+            $('.swiper-container').html(html)
+            var mySwiper = new Swiper ('.swiper-container', {
+            loop: true,
+            autoplay: 2000,
+            autoplayDisableOnInteraction: false,
+            pagination: '.swiper-pagination',
+            paginationType: 'fraction'
+    });
+            var html = template('house-detail-tmpl',{'house':resp.data.house})
+            $('.detail-con').html(html)
+
+            if(resp.data.house.user_id != resp.data.user_id ){
+                $('.book-house').show()
+                $('.book-house').attr('href','/booking.html?hid='+resp.data.house.hid)
+            }
+
+        }
+        else {
+            alert(resp.errmsg)
+        }
+
+
+    })
 
     // TODO: 数据加载完毕后,需要设置幻灯片对象，开启幻灯片滚动
-    var mySwiper = new Swiper ('.swiper-container', {
-        loop: true,
-        autoplay: 2000,
-        autoplayDisableOnInteraction: false,
-        pagination: '.swiper-pagination',
-        paginationType: 'fraction'
-    });
+
 })
