@@ -8,7 +8,7 @@ $(document).ready(function(){
     // $('.popup_con').fadeOut('fast');
 
     // TODO: 在页面加载完毕之后获取区域信息
-    $.get('/api/v1.0/area',function (resp) {
+    $.get('/api/v1.0/areas',function (resp) {
         if(resp.errno == '0'){
             var areas = resp.data
 

@@ -45,6 +45,27 @@ function updateHouseData(action) {
         p:next_page
     };
     // TODO: 获取房屋列表信息
+    $.get('/api/v1.0/houses',params,function (resp) {
+        house_data_querying = false;
+        if (resp.errno == '0'){
+
+            total_page = resp.data.total_page
+            var html = template('house-list-tmpl',{'houses':resp.data.houses});
+            if (action == 'renew'){
+
+            $('.house-list').html(html)
+
+            }
+            else {
+                $('.house-list').append(html)
+                cur_page += 1
+            }
+        }
+        else {
+            alert(resp.errmsg)
+        }
+
+    })
 }
 
 $(document).ready(function(){
@@ -79,6 +100,7 @@ $(document).ready(function(){
             }
             // 在页面添加好城区选项信息后，更新展示房屋列表信息
             updateHouseData("renew");
+
             var windowHeight = $(window).height()
             // 为窗口的滚动添加事件函数
             window.onscroll=function(){
@@ -94,7 +116,7 @@ $(document).ready(function(){
                         // 如果当前页面数还没到达总页数
                         if(cur_page < total_page) {
                             // 将要查询的页数设置为当前页数加1
-                            next_page = cur_page + 1;
+                            next_page = cur_page + 1; //3
                             // 向后端发送请求，查询下一页房屋数据// 向后端发送请求，查询下一页房屋数据
                             updateHouseData();
                         } else {

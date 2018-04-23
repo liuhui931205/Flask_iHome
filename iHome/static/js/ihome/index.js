@@ -101,7 +101,7 @@ $(document).ready(function(){
     });
 
     // TODO: 获取城区信息,获取完毕之后需要设置城区按钮点击之后相关操作
-        $.get('/api/v1.0/area',function (resp) {
+        $.get('/api/v1.0/areas',function (resp) {
             if(resp.errno == '0'){
                 var html = template('area-list-tmpl',{'areas':resp.data})
                 $('.area-list').html(html)
